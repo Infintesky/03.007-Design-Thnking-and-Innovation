@@ -2,10 +2,6 @@ import largestinteriorrectangle as lir
 import cv2
 import numpy as np
 
-# Capture image from webcam and save
-# ret, frame = cv2.VideoCapture(0).read()
-# cv2.imwrite("img2.png", frame)
-
 raw_image = cv2.imread('./tests/test3.png')
 image = cv2.resize(raw_image, None, fx = 0.4, fy = 0.4)
 

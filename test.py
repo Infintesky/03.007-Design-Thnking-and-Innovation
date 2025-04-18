@@ -24,7 +24,7 @@ while True:
     # Optional: remove noise
     kernel = np.ones((60,60),np.uint8)
     fgmask = cv2.morphologyEx(binary_image, cv2.MORPH_CLOSE, kernel)
-
+    
     # Find contours (detected objects)
     contours, _ = cv2.findContours(fgmask, cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)
 
@@ -42,6 +42,7 @@ while True:
     top_left = lir.pt1(largest_rectangle)
     bottom_right = lir.pt2(largest_rectangle)
 
+    # Draw bounding boxes and lir around detected objects
     cv2.drawContours(frame, contour, -1, (0, 255, 0), 3)
     cv2.rectangle(frame, top_left, bottom_right, (255, 0, 0), 2)
 
@@ -54,27 +55,8 @@ while True:
     text_size = cv2.getTextSize(text, cv2.FONT_HERSHEY_SIMPLEX, 1, 2)[0]
     text_x = top_left[0] + (width - text_size[0]) // 2
     text_y = top_left[1] + (height + text_size[1]) // 2
-    # cv2.putText(frame, text, (text_x, text_y), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2)
 
-    # image_with_contours = frame.copy()
-    # image_with_contours = cv2.drawContours(image_with_contours, contour, -1, (0, 255, 0), 3)
-    # cv2.rectangle(image_with_contours, top_left, bottom_right, (255, 0, 0), 2)
-
-    # # Calculate area of pixels
-    # width = bottom_right[0] - top_left[0] + 1
-    # height = bottom_right[1] - top_left[1] + 1
-    
-
-
-    # Draw bounding boxes around detected objects
-    # for cnt in contours:
-    #     if cv2.contourArea(cnt) > 500:  # filter out small noise
-    #         x, y, w, h = cv2.boundingRect(cnt)
-    #         cv2.drawContours(frame, contour, -1, (0, 255, 0), 3)
-            # cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
-
-    # Show results
-    cv2.imshow('Frame', frame)
+    cv2.imshow('Frame', edges)
     # cv2.imshow('FG Mask', fgmask)
 
     if cv2.waitKey(1) & 0xFF == ord('q'):

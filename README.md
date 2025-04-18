@@ -19,8 +19,7 @@ This project captures video from your webcam, detects foreground objects, and co
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/yourusername/largest-interior-rectangle-opencv.git
-   cd largest-interior-rectangle-opencv
+   git clone https://github.com/Infintesky/03.007-Design-Thnking-and-Innovation.git
    ```
 
 2. **Install dependencies and create virtual environment**

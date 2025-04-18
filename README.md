@@ -36,7 +36,7 @@ This project captures video from your webcam, detects foreground objects, and co
 ## Usage
 
 ```bash
-poetry run python3 main.py
+poetry run python3 fun.py
 ```
 
 ## Credits

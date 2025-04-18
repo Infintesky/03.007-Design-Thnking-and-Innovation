@@ -1,55 +1,97 @@
-import largestinteriorrectangle as lir
 import cv2
 import numpy as np
+import largestinteriorrectangle as lir
 
-raw_image = cv2.imread('./tests/test3.png')
-image = cv2.resize(raw_image, None, fx = 0.4, fy = 0.4)
+SCALE = 0.04
 
-gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+def find_LargestInteriorRectangle(binary_image, contour):
+    contour_array = contour[:, 0, :]
+    grid = (binary_image == 255)
+    largest_rectangle = lir.lir(grid, contour_array)
+    top_left = lir.pt1(largest_rectangle)
+    bottom_right = lir.pt2(largest_rectangle)
+    return top_left, bottom_right
 
-# Binarize the image (convert to binary format)
-_, binary_image = cv2.threshold(gray_image, 127, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)
 
-# Clean up grain
-kernel = np.ones((60,60),np.uint8)
-binary_image = cv2.morphologyEx(binary_image, cv2.MORPH_CLOSE, kernel)
+class VideoProcessor:
+    def __init__(self, camera_index=0, width=640, height=480):
+        self.cap = cv2.VideoCapture(camera_index)
+        self.cap.set(cv2.CAP_PROP_FRAME_WIDTH, width)
+        self.cap.set(cv2.CAP_PROP_FRAME_HEIGHT, height) 
+        self.bg_subtractor = cv2.createBackgroundSubtractorMOG2(history=500, varThreshold=16, detectShadows=False)
 
-# Find contours
-contours, _ = cv2.findContours(binary_image, cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)
+    def process_frame(self, frame):
+        kernel = np.ones((60, 60), np.uint8)
+        reusability = False
 
-# Extract the first contour
-print("[+] Number of contours detected:", len(contours))
-c = max(contours, key = cv2.contourArea)
-contour = c
+        # Convert to grayscale and apply threshold
+        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+        _, binary = cv2.threshold(gray, 127, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)
 
-# Convert contour to NumPy array
-contour_array = contour[:, 0, :]
+        # Background subtraction and morphological filtering
+        fgmask = self.bg_subtractor.apply(frame)
+        fgmask = cv2.morphologyEx(binary, cv2.MORPH_CLOSE, kernel)
 
-# Convert the binary image to a boolean array
-grid = (binary_image == 255)
+        # Find contours
+        contours, _ = cv2.findContours(fgmask, cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)
+        if not contours:
+            return frame
 
-# Call largestinteriorrectangle function
-largest_rectangle = lir.lir(grid, contour_array)
+        contour = max(contours, key=cv2.contourArea)
 
-top_left = lir.pt1(largest_rectangle)
-bottom_right = lir.pt2(largest_rectangle)
+        # Find the largest interior rectangle
+        try:
+            top_left, bottom_right = find_LargestInteriorRectangle(binary, contour)
+            # Draw
+            cv2.drawContours(frame, contour, -1, (0, 255, 0), 3)
 
-image_with_contours = image.copy()
-image_with_contours = cv2.drawContours(image_with_contours, contour, -1, (0, 255, 0), 3)
-cv2.rectangle(image_with_contours, top_left, bottom_right, (255, 0, 0), 2)
+            # Dimensions
+            width_px = bottom_right[0] - top_left[0]
+            height_px = bottom_right[1] - top_left[1]
+            width_cm = round(width_px * SCALE, 2)
+            height_cm = round(height_px * SCALE, 2)
 
-# Calculate area of pixels
-width = bottom_right[0] - top_left[0] + 1
-height = bottom_right[1] - top_left[1] + 1
+            if (width_cm and height_cm) > 10.0:
+                reusability = True
+            
+            # Add reusability text on the scaled-down image
+            text = "Reusable" if reusability else "Not Reusable"
+            print("[+] Width:", width_cm, "cm", "Height:", height_cm, "cm", text)
 
-area = width * height
+            cv2.rectangle(frame, top_left, bottom_right, (255, 0, 0), 2) if reusability else cv2.rectangle(frame, top_left, bottom_right, (0, 0, 255), 2)
 
-print("[+] Width in pixels:", width)
-print("[+] Height in pixels:", height) 
-print("[+] Area of rectangle:", area) 
-print("[+] Area of contour:", cv2.contourArea(c))
+            font_color = (0, 0, 255) if not reusability else (0, 255, 0)
+            text_size = cv2.getTextSize(text, cv2.FONT_HERSHEY_SIMPLEX, 0.5, 1)[0]
+            text_x = top_left[0] + (width_px - text_size[0]) // 2
+            text_y = top_left[1] + (height_px + text_size[1]) // 2
+            cv2.putText(frame, text, (text_x, text_y), cv2.FONT_HERSHEY_SIMPLEX, 0.5, font_color, 1, cv2.LINE_AA)
 
-cv2.imshow("",image_with_contours)
-cv2.waitKey(0)
-cv2.destroyAllWindows()
 
+        except Exception as e:
+            # print("LIR computation failed:", e)
+            return frame
+
+        return frame
+
+    def run(self):
+        while True:
+            ret, frame = self.cap.read()
+            if not ret:
+                break
+
+            processed_frame = self.process_frame(frame)
+            cv2.imshow('Frame', processed_frame)
+
+            if cv2.waitKey(1) & 0xFF == ord('q'):
+                break
+
+        self.cleanup()
+
+    def cleanup(self):
+        self.cap.release()
+        cv2.destroyAllWindows()
+
+
+if __name__ == "__main__":
+    processor = VideoProcessor()
+    processor.run()

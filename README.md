@@ -1,6 +1,10 @@
 # Largest Interior Rectangle Detection with OpenCV
 
-This project captures video from your webcam, detects foreground objects, and computes the **Largest Interior Rectangle (LIR)** within those objects using computer vision techniques. The result is displayed in real-time with bounding boxes and dimension labels.
+## About
+
+This Largest Interior Rectangle Detection is designed to determine if used materials in makerspaces are still reusable based on the largest interior rectangular area left on the material. It is developed for SUTD- DTI 03.007.
+
+This code leverages image segmentation techniques from computer vision and result is displayed in real-time with bounding boxes and reusability labels.
 
 ---
 
@@ -10,12 +14,19 @@ This project captures video from your webcam, detects foreground objects, and co
 - Background subtraction using MOG2
 - Noise reduction with morphological operations
 - Largest Interior Rectangle (LIR) detection
-- On-screen display of width and height for the rectangle
+- On-screen display for reusability of material
 
 ---
+## Get Started
+### Prerequisites
+
+Make sure you have the following installed on your system:
+
+- Python 3.13 or later 
+- `Poetry` for dependency management (install using `pipx install poetry`)
 
 
-## Installation
+### Installation Steps
 
 1. **Clone the repository**
    ```bash
@@ -32,11 +43,10 @@ This project captures video from your webcam, detects foreground objects, and co
     poetry env activate
     ```
 
-## Usage
-
-```bash
-poetry run python3 main.py
-```
+4. **Run**
+    ```bash
+    poetry run python3 src/main.py
+    ```
 
 ## Credits
 [LIR algorithm](https://gist.github.com/zaniarshokati/ea7db9ba11b8424ad9b5dfe683a865f4)

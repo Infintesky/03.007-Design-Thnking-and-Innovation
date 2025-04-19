@@ -2,7 +2,7 @@
 
 ## About
 
-This Largest Interior Rectangle Detection is designed to determine if used materials in makerspaces are still reusable based on the largest interior rectangular area left on the material. It is developed for SUTD- DTI 03.007.
+This Largest Interior Rectangle Detection is designed to determine if used materials in makerspaces are still reusable based on the largest interior rectangular area left on the material. It is developed for SUTD - DTI 03.007.
 
 This code leverages image segmentation techniques from computer vision and result is displayed in real-time with bounding boxes and reusability labels.
 

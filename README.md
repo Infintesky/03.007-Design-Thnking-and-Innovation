@@ -6,6 +6,9 @@ This Largest Interior Rectangle Detection is designed to determine if used mater
 
 This code leverages image segmentation techniques from computer vision and result is displayed in real-time with bounding boxes and reusability labels.
 
+https://github.com/user-attachments/assets/aa6e1058-bd67-4b06-a3e6-ba7eb7eae827
+
+https://github.com/user-attachments/assets/8fcde1dd-e40f-4d4d-92d1-138e5d04a25c
 
 ---
 

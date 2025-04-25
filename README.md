@@ -6,6 +6,7 @@ This Largest Interior Rectangle Detection is designed to determine if used mater
 
 This code leverages image segmentation techniques from computer vision and result is displayed in real-time with bounding boxes and reusability labels.
 
+
 ---
 
 ## Features
@@ -48,5 +49,9 @@ Make sure you have the following installed on your system:
     poetry run python3 src/main.py
     ```
 
-## Credits
-[LIR algorithm](https://gist.github.com/zaniarshokati/ea7db9ba11b8424ad9b5dfe683a865f4)
+## References
+[Largest Interior algorithm](https://gist.github.com/zaniarshokati/ea7db9ba11b8424ad9b5dfe683a865f4)
+[Computing the largest orthogonal rectangle in a convex polygon](https://cgm.cs.mcgill.ca/%7Eathens/cs507/Projects/2003/DanielSud/)
+[The Polygon Containment Problem](https://www.cs.princeton.edu/%7Echazelle/pubs/PolygContainmentProb.pdf)
+[Finding the Axis Aligned Largest Interior Rectangle in a simple polygon](https://www.evryway.com/largest-interior/)
+[Algorithm for finding the largest inscribed rectangle in polygon](https://journals.ut.ac.ir/article_71280_2a21de484e568a9e396458a5930ca06a.pdf)
